@@ -76,7 +76,8 @@ code {
   height: 70px;
   color: white;
   border: 1px solid #353b48;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 1.2em;
 }
 .keypad:hover{
   border: 1px solid white;
