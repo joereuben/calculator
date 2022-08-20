@@ -29,22 +29,24 @@ export default function Calculator() {
          */
 
         for (let i = 0; i < text.length; i++) {
-          if((text.charAt(i) === "-") && (lastCharChecked === "-")){
-            //if current character is minus, and last character was minus, add it to number
-            val += lastCharChecked
+          if((text.charAt(i) === "-") && (symbols.test(lastCharChecked)) && (text.length > i+1)){
+            //if current character is minus, and last character was symbol, add it to number AND
+            //theres more characters to follow (otherwise it just adds a symbol alone to the numbers array)
+            val += text.charAt(i)
             continue;
           }
 
           lastCharChecked = text.charAt(i)
           if((i === 0 && symbols.test(lastCharChecked)) || (/[\d\.]/.test(lastCharChecked))){
-              // if the first character is an operand, consider it a num 
-              // OR if character is a digit or decimal append to val
-              val += lastCharChecked
+            // if the first character is an operand, consider it a num 
+            // OR if character is a digit or decimal append to val
+            val += lastCharChecked
           }
           else if(symbols.test(lastCharChecked)){// if character is an operand
-              numbers.push(parseFloat(val)) // add number(val) to array and reset
-              val = "" //reset val
-              operands.push(lastCharChecked) // add operand to array
+            if(val !== "")// if val is not empty add to number
+              numbers.push(parseFloat(val))
+            val = "" //reset val
+            operands.push(lastCharChecked) // add operand to array
           }
             
         }
@@ -83,7 +85,8 @@ export default function Calculator() {
           operandIndex++
           
         }
-        // console.log("numbers: " + numbers)
+        console.log("numbers: " + numbers)
+        console.log("val: " + val)
         // console.log("operands: " + operands)
         // console.log("solution: " + solution)
         setNewText(solution)
@@ -129,13 +132,22 @@ export default function Calculator() {
       
       const displayText = text.toString()
       if(/[\+\/\*]/.test(displayText.charAt(displayText.length - 1))){
-        //if the last character is an operand (except minus), don't add it to string
-        return
+        //if the last character is an operand (except minus), replace it with new symbol
+        if(symbol !== "-"){ // if new symbol is not a minus, replace last character with new
+          const newT = displayText.slice(0, displayText.length - 1);
+          setNewText(symbol)
+          setText(newT+symbol)
+          return
+        }
+        // console.log(displayText.slice(0, displayText.length - 1))
+        // return
       }
       if(/[\-]/.test(displayText.charAt(displayText.length - 1)) && 
-        /[\-]/.test(displayText.charAt(displayText.length - 2))){
-        //if the last character is a minus operand, and the next to last is also a minus operand,
-        // don't add it to string
+        (symbols.test(displayText.charAt(displayText.length - 2)) || displayText.length < 2) || 
+        (/[\-]/.test(displayText.charAt(displayText.length - 1)) && /[^\-]/.test(symbol))){
+        //if the last character is a minus operand, and the next to last is a symbol or there is less than
+        // two characters, don't add it to string OR
+        //last char is minus and new symbol is not not minus
         return
       }
       
