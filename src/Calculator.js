@@ -81,12 +81,14 @@ export default function Calculator() {
             case "*":
               solution = solution * value
               break;
+            default:
+              break;
           }
           operandIndex++
           
         }
-        console.log("numbers: " + numbers)
-        console.log("val: " + val)
+        // console.log("numbers: " + numbers)
+        // console.log("val: " + val)
         // console.log("operands: " + operands)
         // console.log("solution: " + solution)
         setNewText(solution)
@@ -191,9 +193,9 @@ export default function Calculator() {
 
   return (
     <div id='calculator'>
-      <div id="display">
+      <div id="displayArea">
         <div id="fulltext">{text}</div>
-        <div id="newtext">{newText}</div>
+        <div id="display">{newText}</div>
       </div>
       <Keyboard updateText={updateText}/>
     </div>
