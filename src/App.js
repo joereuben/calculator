@@ -5,7 +5,7 @@ function App() {
   return (
     <div id="container">
       <div id="app-name">Calculator</div>
-      <Calculator/>
+      <Calculator />
       <div id="dev-name">Designed and Coded By <br /> Joseph Amofa</div>
     </div>
   );
