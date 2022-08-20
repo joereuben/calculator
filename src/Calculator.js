@@ -21,7 +21,7 @@ export default function Calculator() {
     function calculate() {
         let numbers = []
         let operands = []
-        let val = ""
+        let val = "", lastCharChecked = ""
 
         /**
          * First separate numbers from operands, loop through entire text string, identify digits(with decimal)
@@ -29,20 +29,30 @@ export default function Calculator() {
          */
 
         for (let i = 0; i < text.length; i++) {
-            if((i === 0 && symbols.test(text.charAt(i))) || (/[\d\.]/.test(text.charAt(i)))){
-                // if the first character is an operand, consider it a num 
-                // OR if character is a digit or decimal append to val
-                val += text.charAt(i)
-            }
-            else if(symbols.test(text.charAt(i))){// if character is an operand
-                numbers.push(parseFloat(val)) // add number(val) to array and reset
-                val = "" //reset val
-                operands.push(text.charAt(i)) // add operand to array
-            }
+          if((text.charAt(i) === "-") && (lastCharChecked === "-")){
+            //if current character is minus, and last character was minus, add it to number
+            val += lastCharChecked
+            continue;
+          }
+
+          lastCharChecked = text.charAt(i)
+          if((i === 0 && symbols.test(lastCharChecked)) || (/[\d\.]/.test(lastCharChecked))){
+              // if the first character is an operand, consider it a num 
+              // OR if character is a digit or decimal append to val
+              val += lastCharChecked
+          }
+          else if(symbols.test(lastCharChecked)){// if character is an operand
+              numbers.push(parseFloat(val)) // add number(val) to array and reset
+              val = "" //reset val
+              operands.push(lastCharChecked) // add operand to array
+          }
             
         }
         if(val !== "")// last number
-          numbers.push(val)
+          numbers.push(parseFloat(val))
+
+        if(numbers.length < 2)// if the numbers are less than 2, no operation can be performed
+          return
 
           /**
            * To perform computation, assign first number in array to solution, then in loop, take next
@@ -83,7 +93,7 @@ export default function Calculator() {
 
       switch(keystring){
         case "AC":
-          acClick()
+          clearClick()
           break
         case "/":
           symbolClick("/")
@@ -110,14 +120,25 @@ export default function Calculator() {
       
     }
 
-    function acClick(){
+    function clearClick(){
       setNewText("0")
       setText("")
     }
   
     function symbolClick(symbol) {
       
-      // console.log("symbolclick")
+      const displayText = text.toString()
+      if(/[\+\/\*]/.test(displayText.charAt(displayText.length - 1))){
+        //if the last character is an operand (except minus), don't add it to string
+        return
+      }
+      if(/[\-]/.test(displayText.charAt(displayText.length - 1)) && 
+        /[\-]/.test(displayText.charAt(displayText.length - 2))){
+        //if the last character is a minus operand, and the next to last is also a minus operand,
+        // don't add it to string
+        return
+      }
+      
       setNewText(symbol)
       setText(prevText =>{
         return prevText + symbol
